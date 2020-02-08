@@ -2,12 +2,12 @@
 
 ```shell
 # Terminal 1
-ros2 launch moveit2_test planning_scene_monitor_test.launch.py
+ros2 launch moveit2_test planning_scene_monitor_context.launch.py
 ```
 
 ```shell
 # Terminal 2
-ros2 run --prefix 'gdb -ex run --args' moveit2_test planning_scene_monitor_test
+ros2 launch moveit2_test planning_scene_monitor_test.launch.py
 ```
 
 ```shell
