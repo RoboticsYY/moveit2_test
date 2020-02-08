@@ -14,29 +14,33 @@ int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
 
-  auto node = rclcpp::Node::make_shared("planning_scene_monitor_test");
+  auto node = rclcpp::Node::make_shared("planning_scene_monitor_test",
+                                        rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
 
-  node->declare_parameter(ROBOT_DESCRIPTION, "");
+  if (!node->has_parameter(ROBOT_DESCRIPTION))
+  {
+    node->declare_parameter(ROBOT_DESCRIPTION, "");
 
-  auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node, "robot_state_publisher");
-  while (!parameters_client->wait_for_service(1s)) {
-    if (!rclcpp::ok()) {
-      RCLCPP_ERROR(node->get_logger(), "Interrupted while waiting for the service. Exiting.");
-      return 0;
+    auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(node, "robot_state_publisher");
+    while (!parameters_client->wait_for_service(1s)) {
+      if (!rclcpp::ok()) {
+        RCLCPP_ERROR(node->get_logger(), "Interrupted while waiting for the service. Exiting.");
+        return 0;
+      }
+      RCLCPP_INFO(node->get_logger(), "service not available, waiting again...");
     }
-    RCLCPP_INFO(node->get_logger(), "service not available, waiting again...");
+
+    auto urdf_xml = parameters_client->get_parameter<std::string>(ROBOT_DESCRIPTION, "");
+
+    if (urdf_xml.empty())
+      RCLCPP_ERROR(LOGGER, "Failed to read robot_description parameter");
+
+    node->set_parameter(rclcpp::Parameter(ROBOT_DESCRIPTION, urdf_xml));
   }
-
-  auto urdf_xml = parameters_client->get_parameter<std::string>(ROBOT_DESCRIPTION, "");
-
-  if (urdf_xml.empty())
-    RCLCPP_ERROR(LOGGER, "Failed to read robot_description parameter");
-
-  node->set_parameter(rclcpp::Parameter(ROBOT_DESCRIPTION, urdf_xml));
 
   rclcpp::Clock::SharedPtr clock = std::make_shared<rclcpp::Clock>(RCL_SYSTEM_TIME);
   std::shared_ptr<tf2_ros::Buffer> tf_buffer = std::make_shared<tf2_ros::Buffer>(clock);
-  std::shared_ptr<tf2_ros::TransformListener> tfl = std::make_shared<tf2_ros::TransformListener>(*tf_buffer, node);
+  std::shared_ptr<tf2_ros::TransformListener> tfl = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
 
   planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor(
       new planning_scene_monitor::PlanningSceneMonitor(node, ROBOT_DESCRIPTION, tf_buffer));
@@ -69,7 +73,7 @@ int main(int argc, char** argv)
   rclcpp::WallRate loop_rate(30);
     while (rclcpp::ok()) {
 
-        // rclcpp::spin_some(node);
+        rclcpp::spin_some(node);
         loop_rate.sleep();
     }
 
