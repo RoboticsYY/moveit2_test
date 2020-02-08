@@ -55,9 +55,9 @@ int main(int argc, char** argv)
         break;
       }
     if (debug)
-      RCLCPP_INFO(LOGGER, "MoveGroup debug mode is ON");
+      RCLCPP_INFO(LOGGER, "PlanningScene debug mode is ON");
     else
-      RCLCPP_INFO(LOGGER, "MoveGroup debug mode is OFF");
+      RCLCPP_INFO(LOGGER, "PlanningScene debug mode is OFF");
 
     printf(MOVEIT_CONSOLE_COLOR_CYAN "Starting planning scene monitors...\n" MOVEIT_CONSOLE_COLOR_RESET);
     planning_scene_monitor->startSceneMonitor();

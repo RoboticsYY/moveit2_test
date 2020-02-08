@@ -122,6 +122,10 @@ int main(int argc, char** argv)
   planning_scene.is_diff = true;
   planning_scene_diff_publisher->publish(planning_scene);
 
+  char input_char;
+  std::cout << "Please enter any charactor to continue: ";
+  std::cin >> input_char;
+
   /* Interlude: Synchronous vs Asynchronous updates
   // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   // There are two separate mechanisms available to interact
@@ -181,6 +185,9 @@ int main(int argc, char** argv)
   planning_scene.robot_state.attached_collision_objects.push_back(attached_object);
   planning_scene_diff_publisher->publish(planning_scene);
 
+  std::cout << "Please enter any charactor to continue: ";
+  std::cin >> input_char;
+
   // Detach an object from the robot
   // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   // Detaching an object from the robot requires two operations
@@ -206,6 +213,9 @@ int main(int argc, char** argv)
   planning_scene.is_diff = true;
   planning_scene_diff_publisher->publish(planning_scene);
 
+  std::cout << "Please enter any charactor to continue: ";
+  std::cin >> input_char;
+
   // Remove the object from the collision world
   // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   // Removing the object from the collision world just requires
@@ -220,6 +230,9 @@ int main(int argc, char** argv)
   planning_scene_diff_publisher->publish(planning_scene);
   // END_TUTORIAL
 
-  rclcpp::spin(node);
+  std::cout << "Please enter any charactor to continue: ";
+  std::cin >> input_char;
+
+  rclcpp::spin_some(node);
   return 0;
 }
